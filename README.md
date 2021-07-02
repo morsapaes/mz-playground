@@ -1,1 +1,1 @@
-# mz-playground
+# Materialize Playground
