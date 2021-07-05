@@ -4,6 +4,7 @@
 ```bash
 export DEBEZIUM_VERSION=1.4
 
+# Start the setup
 docker-compose up -d
 
 # Is everything really up and running?
@@ -47,6 +48,10 @@ docker-compose exec schema-registry kafka-avro-console-consumer \
 docker-compose run mzcli
 ```
 
+### Kafka+Avro (Debezium Envelope)
+
+Starting from the assumption that the Debezium MongoDB connector will emit an envelope with a similar structure to that of e.g. Postgres, let's try to create a source consuming Avro-formatted events from Kafka using the [Debezium envelope](https://materialize.com/docs/sql/create-source/avro-kafka/#debezium-envelope-details):
+
 ```sql
 CREATE SOURCE customers
 FROM KAFKA BROKER 'kafka:9092' TOPIC 'dbserver1.inventory.customers'
@@ -54,4 +59,16 @@ FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY 'http://schema-registry:8081'
 ENVELOPE DEBEZIUM;
 ```
 
+This leads to:
+
 `ERROR:  validating avro value schema: source schema is missing 'before' field`
+
+Looking into the [Debezium docs](https://debezium.io/documentation/reference/connectors/mongodb.html):
+
+> In MongoDB’s oplog, update events do not contain the before or after states of the changed document. Consequently, it is not possible for a Debezium connector to provide this information. (…) Downstream consumers of the stream can reconstruct document state by keeping the latest state for each document and comparing the state in a new event with the saved state.
+
+Because Debezium uses a different format for MongoDB's oplog (that omits the `before` field), it's not possible to consume it with Materialize out-of-the-box. 
+
+<hr>
+
+If you're interested in MongoDB CDC support, please leave a comment with your use case in this GitHub issue: https://github.com/MaterializeInc/materialize/issues/7289
