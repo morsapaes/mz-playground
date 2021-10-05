@@ -49,10 +49,7 @@ export CURRENT_HOST='<your-host>'
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://$CURRENT_HOST:8083/connectors/ -d @register-mysql.json
 
 
-curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://$CURRENT_HOST:8083/connector-plugins/ -d @register-mysql.json /connector-plugins/{connectorType}/config/validate
-
-
-curl -X DELETE http://$CURRENT_HOST:8083/connectors/employees-connector
+# curl -X DELETE http://$CURRENT_HOST:8083/connectors/employees-connector
 
 # Check that the connector is running
 curl http://$CURRENT_HOST:8083/connectors/employees-connector/status # | jq
@@ -82,7 +79,7 @@ FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY 'http://schema-registry:8081'
 ENVELOPE DEBEZIUM;
 ```
 
-And then creating a materialized view on top of this source:
+And then create a materialized view on top of this source:
 
 ```sql
 CREATE MATERIALIZED VIEW mv_salaries AS 
@@ -91,7 +88,7 @@ SELECT * FROM salaries;
 
 ### Is it really working?
 
-To check that the CDC functionality is _actually_ working with upsert (and without), let's go back to the MySQL database and perform a basic sequence of operations:
+To check that the CDC functionality is _actually_ working, let's go back to the MySQL database and perform a basic sequence of operations:
 
 ```sql
 INSERT INTO salaries
