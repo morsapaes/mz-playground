@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: public
+    description: blablabla
+    tables:
+      - name: market_orders_raw
+        description: >
+          blablabla
+models:
+  - name: market_orders
+    description: "ddddd"
+
+  - name: avg_bid
+    description: "blablabla"
+    columns:
+      - name: symbol
+        description: "blablabla"
+        tests:
+          - not_null
+      - name: avg
+        description: "blablabla"
