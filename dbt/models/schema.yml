@@ -5,18 +5,17 @@ sources:
     description: blablabla
     tables:
       - name: market_orders_raw
-        description: >
-          blablabla
+        description: "Raw market order data"
 models:
   - name: market_orders
-    description: "ddddd"
+    description: "Converts market order data to proper data types"
 
   - name: avg_bid
-    description: "blablabla"
+    description: "Computes the average bid price"
     columns:
       - name: symbol
-        description: "blablabla"
+        description: "The stock ticker"
         tests:
           - not_null
       - name: avg
-        description: "blablabla"
+        description: "The average bid price"
