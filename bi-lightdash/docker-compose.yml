@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  lightdash:
+    image: lightdash/lightdash:latest
+    depends_on:
+      - materialized
+    environment:
+      - PGHOST=${PGHOST:-materialized}
+      - PGPORT=${PGPORT:-6875}
+      - PGUSER=${PGUSER:-materialize}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGDATABASE=${PGDATABASE:-postgres}
+      - SECURE_COOKIES=${SECURE_COOKIES:-false}
+      - TRUST_PROXY=${TRUST_PROXY:-false}
+      - LIGHTDASH_SECRET="top secret"
+    volumes:
+      - "./dbt:/usr/app/dbt"
+    ports:
+      - ${PORT:-8080}:${PORT:-8080}
+
+  materialized:
+    image: materialize/materialized:v0.16.0
+    container_name: materialized
+    command: -w1 --disable-telemetry
+    ports:
+      - 6875:6875
